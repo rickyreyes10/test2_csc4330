@@ -1,0 +1,64 @@
+Denotational Semantics for Grammar:
+
+1. Statement:
+M_stmt(<STMT>, s) => case <STMT> of
+    <IF_STMT>    => M_if(<IF_STMT>, s)
+    <BLOCK>      => M_block(<BLOCK>, s)
+    <ASSIGN>     => M_assign(<ASSIGN>, s)
+    <DECLARE>    => M_declare(<DECLARE>, s)
+    <WHILE_LOOP> => M_while(<WHILE_LOOP>, s)
+
+2. Statement list:
+M_stmt_list(<STMT_LIST>, s) => if <STMT_LIST> == []
+                                 then s
+                                 else M_stmt_list(rest_of(<STMT_LIST>), M_stmt(first_of(<STMT_LIST>), s))
+
+3. While loop:
+M_while(<WHILE_LOOP>, s) => if M_bool_expr(<BOOL_EXPR>, s) == error
+                               then error
+                               else if M_bool_expr(<BOOL_EXPR>, s) == true
+                                 then M_while(<WHILE_LOOP>, M_block(<BLOCK>, s))
+                                 else s
+
+4. If statement:
+M_if(<IF_STMT>, s) => if M_bool_expr(<BOOL_EXPR>, s) == error
+                        then error
+                        else if M_bool_expr(<BOOL_EXPR>, s) == true
+                          then M_block(<BLOCK1>, s)
+                          else M_block(<BLOCK2>, s)     // BLOCK2 is the else block
+
+5. Block:
+M_block(<BLOCK>, s) => M_stmt_list(<STMT_LIST>, s)
+
+6. Declaration:
+M_declare(<DECLARE>, s) => for each ID in <DECLARE>, update s with ID = undefined
+
+7. Assignment:
+M_assign(<ASSIGN>, s) => if M_expr(<EXPR>, s) == error
+                           then return error
+                           else return s[ID] = M_expr(<EXPR>, s)
+
+8. Expression:
+M_expr(<EXPR>, s) => M_term(<TERM1>, s) + ... + M_term(<TERMn>, s)
+
+9. Term:
+M_term(<TERM>, s) => M_fact(<FACT1>, s) * ... * M_fact(<FACTn>, s)
+
+10. Factor:
+M_fact(<FACT>, s) => case <FACT> of
+    ID        => s[ID]
+    INT_LIT   => <INT_LIT>
+    FLOAT_LIT => <FLOAT_LIT>
+    (EXPR)    => M_expr(<EXPR>, s)
+
+11. Boolean expression:
+M_bool_expr(<BOOL_EXPR>, s) => M_bterm(<BTERM1>, s) relop M_bterm(<BTERM2>, s)
+
+12. Boolean term:
+M_bterm(<BTERM>, s) => M_band(<BAND1>, s) eqop M_band(<BAND2>, s)
+
+13. Boolean AND:
+M_band(<BAND>, s) => M_bor(<BOR1>, s) && M_bor(<BOR2>, s)
+
+14. Boolean OR:
+M_bor(<BOR>, s) => M_expr(<EXPR1>, s) || M_expr(<EXPR2>, s)
