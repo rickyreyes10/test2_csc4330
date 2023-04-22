@@ -1,0 +1,1 @@
+int x; int y; x = 100; y = 6; int sum; sum = x + y; if (sum > 10) { int z; z = 1; } else { int z; z = 4; }
