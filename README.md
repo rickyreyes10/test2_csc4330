@@ -1,1 +1,1 @@
-# test2_csc4330
+this repository contains the RDA python code (lexical analyzer and everything), The text file (.txt) that is the denotational semantics of the grammar, pdf file that contains screenshots of the lr parse table, and the text file (.txt) that contains over 20 valid tokens (25 to be exact) that is valid for the grammar and RDA python code
